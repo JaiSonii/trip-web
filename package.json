@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"mongod\" \"next dev\"",
     "build": "next build",
-    "start": "concurrently \"mongod\" \"next start\"",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
