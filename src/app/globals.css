@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* globals.css */
+
+.table-container {
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  table-layout: auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-table th, .custom-table td {
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0; /* Light border for data cells */
+}
+
+.custom-table th {
+  background-color: #3b4c78; /* Dark header background */
+  color: #ffffff;
+  border-bottom: 2px solid #2b3856; /* Dark border */
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f7fafc; /* Light grey for even rows */
+}
+
+.custom-table tbody tr:hover {
+  background-color: #edf2f7; /* Slightly darker grey on hover */
+}
+
+.custom-table tbody td {
+  color: #2d3748;
+}
+
+.custom-table thead th {
+  font-size: 14px;
+}
