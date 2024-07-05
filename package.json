@@ -1,0 +1,37 @@
+{
+  "name": "transportbook",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"mongod\" \"next dev\"",
+    "build": "next build",
+    "start": "concurrently \"mongod\" \"next start\"",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "firebase": "^10.12.2",
+    "firebaseui": "^6.1.0",
+    "js-cookie": "^3.0.5",
+    "mongoose": "^8.4.4",
+    "next": "14.2.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.2.1",
+    "react-otp-input": "^3.1.1",
+    "react-phone-input-2": "^2.15.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
+    "concurrently": "^7.0.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
