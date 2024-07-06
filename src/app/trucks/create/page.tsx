@@ -42,7 +42,7 @@ const CreateTruck: React.FC = () => {
     useEffect(() => {
         const fetchSuppliers = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/suppliers', {
+                const res = await fetch('/api/suppliers', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const CreateTruck: React.FC = () => {
 
         try {
             // Attempt to fetch POST request to backend
-            const response = await fetch('http://localhost:3000/api/trucks', {
+            const response = await fetch('/api/trucks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
