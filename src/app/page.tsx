@@ -9,7 +9,6 @@ import { onAuthStateChanged } from "firebase/auth";
 export default function Home() {
   return (
     <div>
-      <PhoneSignIn />
     </div>
   );
 }
