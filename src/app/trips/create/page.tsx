@@ -50,7 +50,7 @@ const CreateTripPage: React.FC = () => {
   
     try {
       // Create the trip
-      const tripRes = await fetch('http://localhost:3000/api/trips', {
+      const tripRes = await fetch('/api/trips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const CreateTripPage: React.FC = () => {
       }
   
       // Update driver status
-      const driverRes = await fetch(`http://localhost:3000/api/drivers/${trip.driver}`, {
+      const driverRes = await fetch(`/api/drivers/${trip.driver}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
