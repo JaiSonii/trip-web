@@ -223,10 +223,7 @@ const connectString : any  = process.env.NEXT_PUBLIC_MONGO_URL
 
 export async function connectToDatabase() {
   if (!mongoose.connection.readyState) {
-    await mongoose.connect(connectString,{
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    } as ConnectOptions);
+    await mongoose.connect(connectString);
   }
 }
 
