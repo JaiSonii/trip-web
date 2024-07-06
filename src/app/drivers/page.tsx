@@ -15,7 +15,7 @@ const DriversPage = () => {
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/drivers', {
+        const res = await fetch('/api/drivers', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
