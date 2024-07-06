@@ -14,7 +14,7 @@ const SuppliersPage = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/suppliers', {
+        const res = await fetch('/api/suppliers', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
