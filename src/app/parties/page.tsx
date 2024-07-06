@@ -13,7 +13,7 @@ const PartiesPage = () => {
   useEffect(() => {
     const fetchParties = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/parties', {
+        const res = await fetch('/api/parties', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
