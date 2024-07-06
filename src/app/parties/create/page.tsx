@@ -26,7 +26,7 @@ const CreatePartyPage: React.FC = () => {
         try {
             console.log('Submitted Party:', party);
 
-            const res = await fetch('http://localhost:3000/api/parties', {
+            const res = await fetch('/api/parties', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
