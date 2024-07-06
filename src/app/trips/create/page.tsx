@@ -63,7 +63,8 @@ const CreateTripPage: React.FC = () => {
       }
   
       // Update supplier truck hire cost
-      const supplierRes = await fetch(`/api/suppliers/${trip.supplierId}`, {
+      if (trip.supplierId){
+        const supplierRes = await fetch(`/api/suppliers/${trip.supplierId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -74,6 +75,8 @@ const CreateTripPage: React.FC = () => {
       if (!supplierRes.ok) {
         throw new Error('Failed to update supplier');
       }
+      }
+      
   
       // Update driver status
       const driverRes = await fetch(`/api/drivers/${trip.driver}`, {
