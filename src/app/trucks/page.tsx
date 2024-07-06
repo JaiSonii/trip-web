@@ -11,7 +11,7 @@ const TrucksPage = () => {
   useEffect(() => {
     const fetchTrucks = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/trucks', {
+        const res = await fetch('/api/trucks', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
