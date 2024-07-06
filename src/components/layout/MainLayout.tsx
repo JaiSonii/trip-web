@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image' // Import the Image component for optimized images
-import logo from '@/assets/central_cargo_movers_logo.jpg'
 
 const MainLayout = () => {
   const pathname = usePathname();
