@@ -19,7 +19,7 @@ const MainLayout = () => {
   return (
     <div className="h-screen w-1/6 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-white fixed top-0 left-0 flex flex-col shadow-lg">
       <div className="flex items-center justify-center p-4">
-        <FaTruckMoving />
+        <FaTruckMoving size={40}/>
         <span className="ml-3 text-2xl font-bold">Mo Verse Demo Project</span>
       </div>
       <ul className="list-none p-0 m-0">
