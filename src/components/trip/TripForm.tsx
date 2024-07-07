@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PartySelect } from './PartySelect';
 import { TruckSelect } from './TruckSelect';
 import { DriverSelect } from './DriverSelect';
-import { RouteInputs } from './RouteInputs';
+import RouteInputs from './RouteInputs';
 import { BillingInfo } from './BillingInfo';
 import { DateInputs } from './DateInputs';
 import { IDriver, IParty, TruckModel } from '@/utils/interface';
