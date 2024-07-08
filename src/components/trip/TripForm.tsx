@@ -12,10 +12,11 @@ type Props = {
     parties: IParty[];
     trucks: TruckModel[];
     drivers: IDriver[];
+    lr: string;
     onSubmit: (trip: any) => void;
 };
 
-const TripForm: React.FC<Props> = ({ parties, trucks, drivers, onSubmit }) => {
+const TripForm: React.FC<Props> = ({ parties, trucks, drivers, onSubmit, lr}) => {
     const [formData, setFormData] = useState({
         party: '',
         truck: '',
@@ -31,7 +32,7 @@ const TripForm: React.FC<Props> = ({ parties, trucks, drivers, onSubmit }) => {
         amount: 0,
         startDate: new Date(),
         truckHireCost: 0,
-        LR: '',
+        LR: lr,
         material: '',
         notes: ''
     });

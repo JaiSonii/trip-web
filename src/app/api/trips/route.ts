@@ -9,17 +9,19 @@ import { partySchema } from '@/utils/schema';
 const Trip = models.Trip || model('Trip', tripSchema);
 const Party = models.Party || model('Party', partySchema)
 
+
 export async function GET() {
   try {
-    await connectToDatabase()
+    await connectToDatabase();
 
-    const trips = await Trip.find().exec();
+    const trips = await Trip.find().sort({ 'dates.0': -1 }).exec();
     return NextResponse.json({ trips });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
 
 
 export async function POST(this: any, req: Request) {

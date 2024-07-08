@@ -32,8 +32,11 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
             const username = 'fragtos'; // Replace with your GeoNames username
             const response = await axios.get(`https://secure.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
             const data = response.data;
-            console.log(data)
-            setSuggestions(data.geonames.map((city: any) => city.name +", "+ city.adminName1));
+            
+            // Remove duplicates based on city name
+            const uniqueSuggestions = Array.from(new Set(data.geonames.map((city: any) => city.name + ", " + city.adminName1)));
+
+            setSuggestions(uniqueSuggestions as any);
         } catch (error) {
             console.error('Error fetching suggestions:', error);
         }
