@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Autosuggest from 'react-autosuggest';
-import { cities } from '@/utils/cities';
+import Autosuggest, { SuggestionsFetchRequestedParams } from 'react-autosuggest';
+import axios from 'axios';
 
 interface RouteInputsProps {
     formData: {
@@ -13,31 +13,47 @@ interface RouteInputsProps {
 }
 
 const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => {
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestionsOrigin, setSuggestionsOrigin] = useState<string[]>([]);
+    const [suggestionsDestination, setSuggestionsDestination] = useState<string[]>([]);
     const [highlightedSuggestion, setHighlightedSuggestion] = useState<string | null>(null);
 
-    const getSuggestions = (value: string) => {
-        const inputValue = value.trim().toLowerCase();
-        const inputLength = inputValue.length;
-        return inputLength === 0 ? [] : cities.filter(city =>
-            city.toLowerCase().slice(0, inputLength) === inputValue
-        );
+    useEffect(() => {
+        // Fetch suggestions for origin when formData.route.origin changes
+        fetchSuggestions(formData.route.origin, setSuggestionsOrigin);
+    }, [formData.route.origin]);
+
+    useEffect(() => {
+        // Fetch suggestions for destination when formData.route.destination changes
+        fetchSuggestions(formData.route.destination, setSuggestionsDestination);
+    }, [formData.route.destination]);
+
+    const fetchSuggestions = async (value: string, setSuggestions: React.Dispatch<React.SetStateAction<string[]>>) => {
+        try {
+            const username = 'fragtos'; // Replace with your GeoNames username
+            const response = await axios.get(`http://api.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
+            const data = response.data;
+            setSuggestions(data.geonames.map((city: any) => city.name));
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+        }
     };
 
-    const onSuggestionsFetchRequested = ({ value }: { value: string }) => {
-        setSuggestions(getSuggestions(value));
+    const handleOriginChange = (event: React.ChangeEvent<HTMLInputElement>, { newValue }: { newValue: string }) => {
+        handleChange({ ...event, target: { ...event.target, name: 'route.origin', value: newValue } });
     };
 
-    const onSuggestionsClearRequested = () => {
-        setSuggestions([]);
+    const handleDestinationChange = (event: React.ChangeEvent<HTMLInputElement>, { newValue }: { newValue: string }) => {
+        handleChange({ ...event, target: { ...event.target, name: 'route.destination', value: newValue } });
     };
 
     const renderSuggestion = (suggestion: string) => {
         const isHighlighted = suggestion === highlightedSuggestion;
         return (
-            <div className={`p-2 cursor-pointer ${isHighlighted ? 'bg-gray-200' : ''}`}
-                 onMouseEnter={() => setHighlightedSuggestion(suggestion)}
-                 onMouseLeave={() => setHighlightedSuggestion(null)}>
+            <div
+                className={`p-2 cursor-pointer ${isHighlighted ? 'bg-gray-200' : ''}`}
+                onMouseEnter={() => setHighlightedSuggestion(suggestion)}
+                onMouseLeave={() => setHighlightedSuggestion(null)}
+            >
                 {suggestion}
             </div>
         );
@@ -55,12 +71,12 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
                 <label className="block text-sm font-medium text-gray-700">From</label>
                 <div className="w-full p-2 border border-gray-300 rounded-md">
                     <Autosuggest
-                        suggestions={suggestions}
-                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                        onSuggestionsClearRequested={onSuggestionsClearRequested}
+                        suggestions={suggestionsOrigin}
+                        onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsOrigin)}
+                        onSuggestionsClearRequested={() => setSuggestionsOrigin([])}
                         getSuggestionValue={(suggestion) => suggestion}
                         renderSuggestion={renderSuggestion}
-                        inputProps={inputProps("Enter city", formData.route.origin, (event, { newValue }) => handleChange({ ...event, target: { ...event.target, name: 'route.origin', value: newValue } }))}
+                        inputProps={inputProps("Enter city", formData.route.origin, handleOriginChange)}
                         shouldRenderSuggestions={(value) => value.trim().length > 0}
                     />
                 </div>
@@ -69,12 +85,12 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
                 <label className="block text-sm font-medium text-gray-700">To</label>
                 <div className="w-full p-2 border border-gray-300 rounded-md">
                     <Autosuggest
-                        suggestions={suggestions}
-                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                        onSuggestionsClearRequested={onSuggestionsClearRequested}
+                        suggestions={suggestionsDestination}
+                        onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsDestination)}
+                        onSuggestionsClearRequested={() => setSuggestionsDestination([])}
                         getSuggestionValue={(suggestion) => suggestion}
                         renderSuggestion={renderSuggestion}
-                        inputProps={inputProps("Enter city", formData.route.destination, (event, { newValue }) => handleChange({ ...event, target: { ...event.target, name: 'route.destination', value: newValue } }))}
+                        inputProps={inputProps("Enter city", formData.route.destination, handleDestinationChange)}
                         shouldRenderSuggestions={(value) => value.trim().length > 0}
                     />
                 </div>
