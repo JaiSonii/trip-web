@@ -18,12 +18,10 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
     const [highlightedSuggestion, setHighlightedSuggestion] = useState<string | null>(null);
 
     useEffect(() => {
-        // Fetch suggestions for origin when formData.route.origin changes
         fetchSuggestions(formData.route.origin, setSuggestionsOrigin);
     }, [formData.route.origin]);
 
     useEffect(() => {
-        // Fetch suggestions for destination when formData.route.destination changes
         fetchSuggestions(formData.route.destination, setSuggestionsDestination);
     }, [formData.route.destination]);
 
@@ -33,9 +31,7 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
             const response = await axios.get(`https://secure.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
             const data = response.data;
             
-            // Remove duplicates based on city name
             const uniqueSuggestions = Array.from(new Set(data.geonames.map((city: any) => city.name + ", " + city.adminName1)));
-
             setSuggestions(uniqueSuggestions as any);
         } catch (error) {
             console.error('Error fetching suggestions:', error);
@@ -66,38 +62,35 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
     const inputProps = (placeholder: string, value: string, onChange: (event: any, { newValue }: any) => void) => ({
         placeholder,
         value,
-        onChange
+        onChange,
+        className: 'w-full p-2 border border-gray-300 rounded-md'
     });
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="mb-4">
+        <div className="flex flex-wrap flex-row justify-between">
+            <div className="w-full md:w-1/2 mb-4 pr-1">
                 <label className="block text-sm font-medium text-gray-700">From</label>
-                <div className="w-full p-2 border border-gray-300 rounded-md">
-                    <Autosuggest
-                        suggestions={suggestionsOrigin}
-                        onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsOrigin)}
-                        onSuggestionsClearRequested={() => setSuggestionsOrigin([])}
-                        getSuggestionValue={(suggestion) => suggestion}
-                        renderSuggestion={renderSuggestion}
-                        inputProps={inputProps("Enter city", formData.route.origin, handleOriginChange)}
-                        shouldRenderSuggestions={(value) => value.trim().length > 0}
-                    />
-                </div>
+                <Autosuggest
+                    suggestions={suggestionsOrigin}
+                    onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsOrigin)}
+                    onSuggestionsClearRequested={() => setSuggestionsOrigin([])}
+                    getSuggestionValue={(suggestion) => suggestion}
+                    renderSuggestion={renderSuggestion}
+                    inputProps={inputProps("Enter city", formData.route.origin, handleOriginChange)}
+                    shouldRenderSuggestions={(value) => value.trim().length > 0}
+                />
             </div>
-            <div className="mb-4">
+            <div className="w-full md:w-1/2 mb-4 pl-1">
                 <label className="block text-sm font-medium text-gray-700">To</label>
-                <div className="w-full p-2 border border-gray-300 rounded-md">
-                    <Autosuggest
-                        suggestions={suggestionsDestination}
-                        onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsDestination)}
-                        onSuggestionsClearRequested={() => setSuggestionsDestination([])}
-                        getSuggestionValue={(suggestion) => suggestion}
-                        renderSuggestion={renderSuggestion}
-                        inputProps={inputProps("Enter city", formData.route.destination, handleDestinationChange)}
-                        shouldRenderSuggestions={(value) => value.trim().length > 0}
-                    />
-                </div>
+                <Autosuggest
+                    suggestions={suggestionsDestination}
+                    onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsDestination)}
+                    onSuggestionsClearRequested={() => setSuggestionsDestination([])}
+                    getSuggestionValue={(suggestion) => suggestion}
+                    renderSuggestion={renderSuggestion}
+                    inputProps={inputProps("Enter city", formData.route.destination, handleDestinationChange)}
+                    shouldRenderSuggestions={(value) => value.trim().length > 0}
+                />
             </div>
         </div>
     );
