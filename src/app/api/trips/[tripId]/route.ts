@@ -1,5 +1,5 @@
 import { ITrip } from "@/utils/interface";
-import { connectToDatabase } from "@/utils/schema";
+import { connectToDatabase, partySchema } from "@/utils/schema";
 import { tripSchema } from "@/utils/schema";
 import {models, model} from 'mongoose'
 import { NextResponse } from "next/server";
@@ -46,8 +46,14 @@ export async function GET(req: Request, { params }: { params: { tripId: string }
       }
   
       if (account) {
+        const Party = models.Party || model('Party', partySchema)
         trip.accounts.push(account);
-        if(trip.balance - account.amount >= 0) trip.balance = parseFloat(trip.balance) - parseFloat(account.amount)
+        if(trip.balance - account.amount >= 0){
+          trip.balance = parseFloat(trip.balance) - parseFloat(account.amount)
+          const party = await Party.findOne({party_id : trip.party})
+          party.balance = parseFloat(party.balance) - parseFloat(account.amount)
+          await party.save()
+        } 
         else NextResponse.json({error : 'Failed to update'})
         
       }

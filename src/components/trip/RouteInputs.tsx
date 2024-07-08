@@ -30,9 +30,10 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
     const fetchSuggestions = async (value: string, setSuggestions: React.Dispatch<React.SetStateAction<string[]>>) => {
         try {
             const username = 'fragtos'; // Replace with your GeoNames username
-            const response = await axios.get(`https://secure.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
+            const response = await axios.get(`http://api.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
             const data = response.data;
-            setSuggestions(data.geonames.map((city: any) => city.name));
+            console.log(data)
+            setSuggestions(data.geonames.map((city: any) => city.name +", "+ city.adminName1));
         } catch (error) {
             console.error('Error fetching suggestions:', error);
         }

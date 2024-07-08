@@ -102,7 +102,7 @@ const TripsPage = () => {
                 <td>{parties?.find((party) => party.party_id == trip.party)?.name}</td>
 
                 <td>{trip.truck}</td>
-                <td>{trip.route.origin} -&gt; {trip.route.destination}</td>
+                <td>{trip.route.origin.split(',')[0]} -&gt; {trip.route.destination.split(',')[0]}</td>
                 <td>{statuses[trip.status as number]}</td>
                 <td>{trip.balance}</td>
 

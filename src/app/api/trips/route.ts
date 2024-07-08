@@ -4,8 +4,10 @@ import { tripSchema } from '@/utils/schema';
 import { connectToDatabase } from '@/utils/schema';
 import { ITrip } from '@/utils/interface';
 import {v4 as uuidv4} from 'uuid'
+import { partySchema } from '@/utils/schema';
 
 const Trip = models.Trip || model('Trip', tripSchema);
+const Party = models.Party || model('Party', partySchema)
 
 export async function GET() {
   try {
@@ -27,7 +29,6 @@ export async function POST(this: any, req: Request) {
     const data = await req.json(); // Parse JSON data from request body
 
     // Basic validation (you can implement your own validation logic here if needed)
-    console.log(data)
     const datearr = [new Date(data.startDate), null, null, null, null]
 
     // Create a new Trip instance based on ITrip interface
@@ -54,6 +55,10 @@ export async function POST(this: any, req: Request) {
 
     // Save the new trip document
     const savedTrip = await newTrip.save();
+
+    const party = await Party.findOne({party_id : data.party})
+    party.balance = parseFloat(party.balance) + newTrip.amount
+    await party.save()
 
     // Return success response
     return NextResponse.json({ message: 'Saved Successfully', data: savedTrip }, { status: 200 });
