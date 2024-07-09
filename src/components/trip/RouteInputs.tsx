@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Autosuggest, { SuggestionsFetchRequestedParams } from 'react-autosuggest';
 import axios from 'axios';
+import debounce from 'lodash.debounce';
 
 interface RouteInputsProps {
     formData: {
@@ -12,31 +13,45 @@ interface RouteInputsProps {
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 }
 
+const cache: { [key: string]: string[] } = {};
+
 const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => {
     const [suggestionsOrigin, setSuggestionsOrigin] = useState<string[]>([]);
     const [suggestionsDestination, setSuggestionsDestination] = useState<string[]>([]);
     const [highlightedSuggestion, setHighlightedSuggestion] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchSuggestions(formData.route.origin, setSuggestionsOrigin);
-    }, [formData.route.origin]);
+    const fetchSuggestions = useCallback(
+        debounce(async (value: string, setSuggestions: React.Dispatch<React.SetStateAction<string[]>>) => {
+            if (cache[value]) {
+                setSuggestions(cache[value]);
+                return;
+            }
+            try {
+                const username = 'fragtos'; // Replace with your GeoNames username
+                const response = await axios.get(`https://secure.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
+                const data = response.data;
+
+                const uniqueSuggestions = Array.from(new Set(data.geonames.map((city: any) => city.name + ", " + city.adminName1)));
+                cache[value] = uniqueSuggestions as any;
+                setSuggestions(uniqueSuggestions as any);
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+            }
+        }, 300),
+        []
+    );
 
     useEffect(() => {
-        fetchSuggestions(formData.route.destination, setSuggestionsDestination);
-    }, [formData.route.destination]);
-
-    const fetchSuggestions = async (value: string, setSuggestions: React.Dispatch<React.SetStateAction<string[]>>) => {
-        try {
-            const username = 'fragtos'; // Replace with your GeoNames username
-            const response = await axios.get(`https://secure.geonames.org/searchJSON?name_startsWith=${value}&maxRows=7&country=IN&username=${username}`);
-            const data = response.data;
-            
-            const uniqueSuggestions = Array.from(new Set(data.geonames.map((city: any) => city.name + ", " + city.adminName1)));
-            setSuggestions(uniqueSuggestions as any);
-        } catch (error) {
-            console.error('Error fetching suggestions:', error);
+        if (formData.route.origin.trim().length > 0) {
+            fetchSuggestions(formData.route.origin, setSuggestionsOrigin);
         }
-    };
+    }, [formData.route.origin, fetchSuggestions]);
+
+    useEffect(() => {
+        if (formData.route.destination.trim().length > 0) {
+            fetchSuggestions(formData.route.destination, setSuggestionsDestination);
+        }
+    }, [formData.route.destination, fetchSuggestions]);
 
     const handleOriginChange = (event: React.ChangeEvent<HTMLInputElement>, { newValue }: { newValue: string }) => {
         handleChange({ ...event, target: { ...event.target, name: 'route.origin', value: newValue } });

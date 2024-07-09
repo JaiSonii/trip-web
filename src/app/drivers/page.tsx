@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import from 'next/router' instead of 'next/navigation'
 import { IDriver } from '@/utils/interface';
+import Loading from '../loading';
 
 const DriversPage = () => {
   const router = useRouter();
@@ -41,7 +42,7 @@ const DriversPage = () => {
 
   // Handling different states
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {

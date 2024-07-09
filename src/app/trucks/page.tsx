@@ -2,6 +2,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { TruckModel } from '@/utils/interface';
+import Loading from '../loading';
 
 const TrucksPage = () => {
   const [trucks, setTrucks] = useState<TruckModel[] | null>(null);
@@ -27,7 +28,10 @@ const TrucksPage = () => {
       } catch (err) {
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -35,11 +39,11 @@ const TrucksPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500">Error: {error}</div>;
   }
 
   if (!trucks || trucks.length === 0) {
@@ -50,22 +54,22 @@ const TrucksPage = () => {
     <div className="w-full h-full p-4">
       <h1 className="text-2xl font-bold mb-4">Trucks</h1>
       <div className="table-container">
-        <table className="custom-table">
+        <table className="custom-table w-full border-collapse">
           <thead>
-            <tr>
-              <th>Truck Number</th>
-              <th>Truck Type</th>
-              <th>Ownership</th>
-              <th>Status</th>
+            <tr className="bg-gray-200">
+              <th className="border p-2">Truck Number</th>
+              <th className="border p-2">Truck Type</th>
+              <th className="border p-2">Ownership</th>
+              <th className="border p-2">Status</th>
             </tr>
           </thead>
           <tbody>
             {trucks.map((truck, index) => (
               <tr key={index} className="border-t">
-                <td>{truck.truckNo}</td>
-                <td>{truck.truckType}</td>
-                <td>{truck.ownership}</td>
-                <td>{truck.status}</td>
+                <td className="border p-2">{truck.truckNo}</td>
+                <td className="border p-2">{truck.truckType}</td>
+                <td className="border p-2">{truck.ownership}</td>
+                <td className="border p-2">{truck.status}</td>
               </tr>
             ))}
           </tbody>

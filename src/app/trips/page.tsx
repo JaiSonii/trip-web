@@ -6,6 +6,7 @@ import { IParty, ITrip } from '@/utils/interface';
 import { statuses } from '@/utils/schema';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Loading from '../loading';
 
 const TripsPage = () => {
   const [trips, setTrips] = useState<ITrip[] | null>(null);
@@ -56,7 +57,10 @@ const TripsPage = () => {
       } catch (err) {
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -67,7 +71,7 @@ const TripsPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {

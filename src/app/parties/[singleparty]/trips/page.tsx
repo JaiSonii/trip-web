@@ -27,7 +27,10 @@ const SinglePartyTrips = () => {
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 

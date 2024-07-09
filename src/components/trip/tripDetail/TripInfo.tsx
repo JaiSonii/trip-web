@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MdEdit } from "react-icons/md";
 
 interface TripInfoProps {
   label: string;
@@ -45,10 +46,10 @@ const TripInfo: React.FC<TripInfoProps> = ({ label, value, tripId }) => {
         )}
         {label === 'Notes' && !isEditingNotes && (
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md focus:outline-none transition duration-300 ease-in-out transform hover:scale-105 absolute top-4 right-4"
+            className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-700 hover:to-purple-700 text-white font-bold shadow-lg py-1 px-3 rounded-md focus:outline-none transition duration-300 ease-in-out transform hover:scale-105 absolute top-4 right-4"
             onClick={() => setIsEditingNotes(true)}
           >
-            Add Notes
+            <MdEdit />
           </button>
         )}
       </div>

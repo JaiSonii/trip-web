@@ -24,6 +24,7 @@ export interface IDriver extends Document {
 // interfaces/Trip.ts
 
 export interface PaymentBook {
+  paymentBook_id: string
   accountType: string
   amount: number;
   paymentType: 'Cash' | 'Cheque' | 'Online Transfer';
@@ -37,7 +38,17 @@ interface Route {
   destination: string;
 }
 
+export interface TripExpense extends Document{
+  trip_id: string;
+  partyBill: boolean;
+  amount: number;
+  date: Date;
+  expenseType: string;
+  notes?: string;
+}
+
 export interface ITrip extends Document {
+  expenses: TripExpense[];
   tripId: string;
   party: string;
   truck: string;

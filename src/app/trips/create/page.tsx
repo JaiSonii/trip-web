@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import TripForm from '@/components/trip/TripForm';
 import { IDriver, TruckModel, IParty, ITrip } from '@/utils/interface';
 import { useRouter } from 'next/navigation';
+import Loading from '@/app/loading';
 
 const CreateTripPage: React.FC = () => {
   const router = useRouter();
@@ -51,7 +52,10 @@ const CreateTripPage: React.FC = () => {
       } catch (err) {
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -127,7 +131,7 @@ const CreateTripPage: React.FC = () => {
   };
 
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>Error: {error}</div>;
 
   return (

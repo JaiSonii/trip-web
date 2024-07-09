@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
-
 import { ITrip, PaymentBook } from '@/utils/interface';
+import { MdDelete, MdEdit } from 'react-icons/md';
 
 interface DataListProps {
   data: PaymentBook[];
@@ -14,8 +14,10 @@ interface DataListProps {
 
 const DataList: React.FC<DataListProps> = ({ data, label, modalTitle, trip, setData, setBalance }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [listData, setListData] = useState<PaymentBook[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<PaymentBook | null>(null);
 
   const name = label;
 
@@ -24,9 +26,9 @@ const DataList: React.FC<DataListProps> = ({ data, label, modalTitle, trip, setD
     const sortedData = temp.sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime());
     setListData(sortedData);
   }, [data]);
-  
 
   const handleAddItem = async (newItem: {
+    paymentBook_id? : string
     accountType: string;
     amount: number;
     paymentType: 'Cash' | 'Cheque' | 'Online Transfer';
@@ -71,8 +73,33 @@ const DataList: React.FC<DataListProps> = ({ data, label, modalTitle, trip, setD
     }
   };
 
+  const handleDeleteItem = async (id: string, amount: any) => {
+    try {
+      const res = await fetch(`/api/trips/${trip.tripId}/accounts/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount : amount}),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to delete item');
+      }
+      const resData = await res.json();
+      setData(resData.trip.accounts);
+      setBalance(resData.trip.balance);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const toggleItemExpansion = (index: number) => {
     setExpandedItem(expandedItem === index ? null : index);
+  };
+
+  const openEditModal = (item: PaymentBook) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
   };
 
   return (
@@ -114,6 +141,14 @@ const DataList: React.FC<DataListProps> = ({ data, label, modalTitle, trip, setD
                   {item.notes && (
                     <p className="text-xs text-gray-600">Notes: {item.notes}</p>
                   )}
+                  <div className="mt-2 flex justify-end">
+                    <button
+                      className="text-xs text-red-500 hover:text-red-700 focus:outline-none"
+                      onClick={() => handleDeleteItem(item._id, item.amount)}
+                    >
+                      <MdDelete className="text-xl text-red-700" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ITrip, PaymentBook } from '@/utils/interface';
+import { ITrip, PaymentBook, TripExpense,  } from '@/utils/interface';
 import TruckHeader from './TruckHeader';
 import TripInfo from './TripInfo';
 import TripStatus from './TripStatus';
 import StatusButton from './TripFunctions/StatusButton'; // Replace with your actual StatusButton component
 import ViewBillButton from './TripFunctions/ViewBill'; // Replace with your actual ViewBillButton component
-
 import Profit from './Profit';
 import PODViewer from './PODViewer';
 import DataList from './DataList';
+import Charges from './Charges'; // Import the Charges component
 
 interface TripDetailsProps {
   trip: ITrip;
@@ -18,7 +18,8 @@ interface TripDetailsProps {
 const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
   const [partyName, setPartyName] = useState('');
   const [accounts, setAccounts] = useState<PaymentBook[]>(trip.accounts);
-  const [tripBalance, setBalance] = useState(trip.balance)
+  const [tripBalance, setBalance] = useState(trip.balance);
+  const [charges, setCharges] = useState<TripExpense[]>([])
 
   useEffect(() => {
     const fetchPartyName = async () => {
@@ -38,6 +39,17 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         console.log('Error fetching party name:', error);
       }
     };
+    const fetchCharges  = async () =>{
+      const response = await fetch(`/api/trips/${trip.tripId}/expenses`);
+      const data = await response.json();
+      console.log(data)
+      setCharges(data.charges);
+    }
+    if (charges){
+      const sorted = [...charges].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    setCharges(sorted);
+    }
+    fetchCharges()
     fetchPartyName();
   }, [trip]);
 
@@ -61,30 +73,30 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
       console.log('Error settling amount:', error);
     }
 
-    if (data.status === 1){
+    if (data.status === 1) {
       try {
-        const driverRes = await fetch(`/api/drivers/${trip.driver}`,{
-          method : 'PATCH',
+        const driverRes = await fetch(`/api/drivers/${trip.driver}`, {
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ status: 'Available' }), // Assuming your PATCH route can handle this
-        })
+        });
         if (!driverRes.ok) {
           throw new Error('Failed to update driver status');
         }
-        const truckRes = await fetch(`/api/trucks/${trip.truck}`,{
-          method : 'PATCH',
+        const truckRes = await fetch(`/api/trucks/${trip.truck}`, {
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ status: 'Available' }), // Assuming your PATCH route can handle this
-        })
+        });
         if (!truckRes.ok) {
           throw new Error('Failed to update truck status');
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
 
@@ -104,21 +116,21 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
                 paymentType: data.paymentType,
                 paymentDate: data.dates[4],
                 notes: data.notes,
-              }
-            }
+              },
+            },
           }),
         });
         if (!res.ok) {
           throw new Error('Failed to add new item');
         }
         const resData = await res.json();
-        console.log(resData)
-        setAccounts(resData.trip.accounts)
-        setBalance(resData.trip.balance)
-        console.log('Payemnt setteled')
-      } catch (error : any) {
-        alert(error.message)
-        console.log(error)
+        console.log(resData);
+        setAccounts(resData.trip.accounts);
+        setBalance(resData.trip.balance);
+        console.log('Payment settled');
+      } catch (error: any) {
+        alert(error.message);
+        console.log(error);
       }
 
       if (data.receivedByDriver === true) {
@@ -137,15 +149,18 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         if (!driverRes.ok) {
           throw new Error('Failed to update driver');
         }
-        console.log('success')
+        console.log('success');
       }
-
     }
 
     console.log('Settle amount button clicked');
   };
 
-  const podUrl = ``; // Assuming podImage path
+  const handleAddCharge = (newCharge: any) => {
+    // Add logic to handle adding the new charge
+  };
+
+  const podUrl = ''; // Assuming podImage path
 
   return (
     <div className="p-6 bg-white shadow-md rounded-md grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -175,15 +190,18 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <TripInfo label="Frieght Amount" value={`₹ ${trip.amount.toLocaleString()}`} />
+          <TripInfo label="Freight Amount" value={`₹ ${trip.amount.toLocaleString()}`} />
           <TripInfo label="Start Date" value={new Date(trip.startDate).toLocaleDateString()} />
           <TripInfo label="End Date" value={trip.dates[1] ? new Date(trip.dates[1]).toLocaleDateString() : '----'} />
-          <TripInfo label="Notes" value={trip.notes || 'No notes available'} tripId={trip.tripId}/>
+          <TripInfo label="Notes" value={trip.notes || 'No notes available'} tripId={trip.tripId} />
         </div>
 
         {/* Reusable Components */}
         <DataList data={accounts} label="Advances" modalTitle="Add Advance" trip={trip} setData={setAccounts} setBalance={setBalance} />
         <DataList data={accounts} label="Payments" modalTitle="Add Payment" trip={trip} setData={setAccounts} setBalance={setBalance} />
+
+        {/* Charges Component Integration */}
+        <Charges charges={charges} onAddCharge={handleAddCharge} setCharges={setCharges} tripId={trip.tripId}/>
       </div>
 
       {/* Right Side - Profit, Balance, and POD Viewer */}
@@ -193,13 +211,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
           <p className="text-2xl font-semibold mt-4">₹ {tripBalance}</p>
         </div>
         <Profit label="Profit" value={""} />
-
-
         <PODViewer podUrl={podUrl} />
       </div>
-
-      {/* Buttons Section */}
-
     </div>
   );
 };

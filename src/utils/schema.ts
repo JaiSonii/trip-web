@@ -43,6 +43,7 @@ export const partySchema = new Schema({
 
 
   export const PaymentBookSchema = {
+    paymentBook_id: String,
     accountType :{
       type : String,
       enum : ['Payments', 'Advances']
@@ -218,6 +219,32 @@ export const userSchema = new Schema({
   phoneNumber: { type: String, required: true, unique: true },
   createdAt: { type: Date, default: Date.now }
 });
+
+export const tripExpenseSchema = new Schema({
+  trip_id : {
+    type : String,
+    required : true
+  },
+  partyBill : {
+    type : Boolean,
+    required: true
+  },
+  amount : {
+    type : Number,
+    required : true
+  },
+  date : {
+    type : Date,
+    required : true
+  },
+  expenseType:{
+    type : String,
+    required : true
+  },
+  notes : {
+    type : String
+  }
+})
 
 const connectString : any  = process.env.NEXT_PUBLIC_MONGO_URL
 

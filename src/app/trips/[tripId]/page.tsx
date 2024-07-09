@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { ITrip } from '@/utils/interface';
 import { useParams } from 'next/navigation';
 import TripDetails from '@/components/trip/tripDetail/TripDetail';
+import Loading from '@/app/loading';
 
 const TripPage: React.FC = () => {
   const [trip, setTrip] = useState<ITrip | null>(null);
@@ -37,7 +38,7 @@ const TripPage: React.FC = () => {
   }, [tripId]);
 
   if (!trip) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

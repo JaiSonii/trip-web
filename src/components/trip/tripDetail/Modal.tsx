@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { PaymentBook } from '@/utils/interface';
+import React, { useEffect, useState } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,22 +17,26 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, modalTitle, accountType }) => {
-  const [amount, setAmount] = useState<number | ''>('');
+  const [amount, setAmount] = useState<number | ''>(0);
   const [paymentType, setPaymentType] = useState<'Cash' | 'Cheque' | 'Online Transfer'>('Cash');
   const [receivedByDriver, setReceivedByDriver] = useState(false);
-  const [paymentDate, setPaymentDate] = useState('');
+  const [paymentDate, setPaymentDate] = useState(new Date().toLocaleDateString());
   const [notes, setNotes] = useState('');
+
+
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      accountType,
-      amount: Number(amount),
-      paymentType,
-      receivedByDriver,
-      paymentDate,
-      notes,
-    });
+    
+      onSave({
+        accountType,
+        amount: Number(amount),
+        paymentType,
+        receivedByDriver,
+        paymentDate,
+        notes,
+      });
     setAmount('');
     setPaymentType('Cash');
     setReceivedByDriver(false);
@@ -43,7 +48,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, modalTitle, acco
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
         <h3 className="text-lg font-semibold mb-4">{modalTitle}</h3>
         <form onSubmit={handleSubmit}>
@@ -115,6 +122,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, modalTitle, acco
         </form>
       </div>
     </div>
+    </>
+    
   );
 };
 

@@ -1,8 +1,9 @@
-import { ITrip } from "@/utils/interface";
+import { ITrip, PaymentBook } from "@/utils/interface";
 import { connectToDatabase, partySchema } from "@/utils/schema";
 import { tripSchema } from "@/utils/schema";
 import {models, model} from 'mongoose'
 import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 
 const Trip = models.Trip || model('Trip', tripSchema)
@@ -46,8 +47,16 @@ export async function GET(req: Request, { params }: { params: { tripId: string }
       }
   
       if (account) {
+        if (account.paymentBook_id){
+          trip.accounts = trip.accounts.filter((acc: PaymentBook) => acc.paymentBook_id = account.paymentBook_id)
+          trip.accounts.push(account)
+        }
+        else{
+          account.paymentBook_id = 'payment' + uuidv4()
+          trip.accounts.push(account);
+        }
         const Party = models.Party || model('Party', partySchema)
-        trip.accounts.push(account);
+        
         if(trip.balance - account.amount >= 0){
           trip.balance = parseFloat(trip.balance) - parseFloat(account.amount)
           const party = await Party.findOne({party_id : trip.party})

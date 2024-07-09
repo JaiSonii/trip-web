@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ISupplier } from '@/utils/interface';
+import Loading from '../loading';
 
 const SuppliersPage = () => {
   const [suppliers, setSuppliers] = useState<ISupplier[] | null>(null);
@@ -30,7 +31,10 @@ const SuppliersPage = () => {
       } catch (err) {
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -38,7 +42,7 @@ const SuppliersPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {

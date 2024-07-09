@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { IParty } from '@/utils/interface';
 import { useRouter } from 'next/navigation';
+import Loading from '../loading';
 
 const PartiesPage = () => {
   const [parties, setParties] = useState<IParty[] | null>(null);
@@ -30,7 +31,10 @@ const PartiesPage = () => {
       } catch (err) {
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        // Add a delay to improve UI experience even on fast networks
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -38,7 +42,7 @@ const PartiesPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {

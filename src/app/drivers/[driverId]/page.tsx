@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { MdDelete } from "react-icons/md";
 import DriverLayout from '@/components/driver/driverLayout';
 import { IDriver } from '@/utils/interface';
+import Loading from '@/app/loading';
 
 const Driver: React.FC = () => {
   // Extract the driverId from the URL path
@@ -64,7 +65,7 @@ const Driver: React.FC = () => {
 
   // Show loading state if data is still being fetched
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   // Show error message if there's an error
