@@ -23,7 +23,7 @@ export interface IDriver extends Document {
 }
 // interfaces/Trip.ts
 
-export interface PaymentBook {
+export interface PaymentBook extends Document{
   paymentBook_id: string
   accountType: string
   amount: number;
