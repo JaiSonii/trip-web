@@ -132,7 +132,7 @@ const DataList: React.FC<DataListProps> = ({data,label,modalTitle,trip,setData,s
           +
         </button>
       </div>
-      {!data || data.length === 0 ? (
+      {!listData || listData.length === 0 ? (
         <p className="text-sm text-gray-500">No {label.toLowerCase()} available.</p>
       ) : (
         <div className="bg-white shadow-lg rounded-lg divide-y divide-gray-200">
