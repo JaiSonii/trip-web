@@ -35,7 +35,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ name, status, driverId, onD
 
   const handleConfirm = async (amount: number, reason: string, date: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/drivers/${driverId}`, {
+      const response = await fetch(`/api/drivers/${driverId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ name, status, driverId, onD
     };
 
     try {
-      const response = await fetch(`http://localhost:3000/api/drivers/${driverId}`, {
+      const response = await fetch(`/api/drivers/${driverId}`, {
         method: 'PATCH', // Use PATCH to partially update the driver
         headers: {
           'Content-Type': 'application/json',
@@ -93,21 +93,27 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ name, status, driverId, onD
 
   const handleDeleteDriver = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/drivers/${driverId}`, {
+      const response = await fetch(`/api/drivers/${driverId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
+  
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error('Failed to delete driver');
+        if (response.status === 400) {
+          alert(data.message);
+          return;
+        }
+        throw new Error(data.message || 'Failed to delete driver');
       }
-
-      alert('Driver Removed Succesfully')
-      router.push('/drivers')
+  
+      alert('Driver Removed Successfully');
+      router.push('/drivers');
     } catch (error: any) {
       console.error('Failed to delete driver:', error);
+      alert(error.message);  // Display an alert with the error message
       setError(error.message);
     }
   };

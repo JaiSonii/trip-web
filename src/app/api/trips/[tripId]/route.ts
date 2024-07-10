@@ -1,5 +1,6 @@
+import DriverModal from "@/components/driver/driverModal";
 import { ITrip, PaymentBook } from "@/utils/interface";
-import { connectToDatabase, partySchema } from "@/utils/schema";
+import { connectToDatabase, driverSchema, partySchema, truckSchema } from "@/utils/schema";
 import { tripSchema } from "@/utils/schema";
 import {models, model} from 'mongoose'
 import { NextResponse } from "next/server";
@@ -80,5 +81,67 @@ export async function GET(req: Request, { params }: { params: { tripId: string }
     } catch (err: any) {
       console.log(err);
       return NextResponse.json({ message: err.message }, { status: 500 });
+    }
+  }
+
+  export async function PUT(req: Request, { params }: { params: { tripId: string } }) {
+    const { tripId } = params;
+  
+    try {
+      await connectToDatabase();
+  
+      // Assuming data is correctly parsed from req.json()
+      const { data } = await req.json();
+  
+      // Assuming models.Truck and models.Driver are defined elsewhere
+      const Truck = models.Truck || model('Truck', truckSchema);
+      const Driver = models.Driver || model('Driver', driverSchema);
+  
+      
+      const trip = await Trip.findOneAndUpdate({ tripId: tripId }, data, {new:true});
+      
+      if (!trip) {
+        return NextResponse.json({ message: 'Trip not found' }, { status: 404 });
+      }
+
+
+
+      // Update driver status to 'On Trip'
+      
+      await Driver.findOneAndUpdate({ driver_id: trip.driver }, { status: 'On Trip' });
+  
+      // Update truck status to 'On Trip'
+      
+      await Truck.findOneAndUpdate({ truckNo: trip.truck }, { status: 'On Trip' });
+  
+      // Return updated trip with status 200
+      return NextResponse.json({ trip }, { status: 200 });
+    } catch (err: any) {
+      console.error(err);
+      return NextResponse.json({ message: 'Internal Server Error', error: err.message }, { status: 500 });
+    }
+  }
+  
+  export async function DELETE(req: Request, { params }: { params: { tripId: string } }) {
+    const { tripId } = params;
+    const Truck = models.Truck || model('Truck', truckSchema);
+      const Driver = models.Driver || model('Driver', driverSchema);
+  
+    try {
+      await connectToDatabase();
+  
+      const trip = await Trip.findOneAndDelete({ tripId }).exec();
+  
+      if (!trip) {
+        return NextResponse.json({ message: 'Trip not found' }, { status: 404 });
+      }
+  
+      await Truck.findOneAndUpdate({truckNo : trip.truck}, {status : 'Available'})
+      await Driver.findOneAndUpdate({driver_id : trip.driver}, {status : 'Available'})
+
+      return NextResponse.json({ trip }, { status: 200 });
+    } catch (err: any) {
+      console.error(err);
+      return NextResponse.json({ message: 'Internal Server Error', error: err.message }, { status: 500 });
     }
   }

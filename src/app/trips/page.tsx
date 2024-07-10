@@ -2,11 +2,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { IParty, ITrip } from '@/utils/interface';
+import { IParty, ITrip, TripExpense } from '@/utils/interface';
 import { statuses } from '@/utils/schema';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Loading from '../loading';
+import { fetchBalance } from '@/helpers/fetchTripBalance';
 
 const TripsPage = () => {
   const [trips, setTrips] = useState<ITrip[] | null>(null);
@@ -108,7 +109,7 @@ const TripsPage = () => {
                 <td>{trip.truck}</td>
                 <td>{trip.route.origin.split(',')[0]} -&gt; {trip.route.destination.split(',')[0]}</td>
                 <td>{statuses[trip.status as number]}</td>
-                <td>{trip.balance}</td>
+                <td>{fetchBalance(trip)}</td>
 
               </tr>
             ))}

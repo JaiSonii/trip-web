@@ -49,7 +49,6 @@ export interface TripExpense extends Document{
 }
 
 export interface ITrip extends Document {
-  expenses: TripExpense[];
   tripId: string;
   party: string;
   truck: string;
@@ -57,7 +56,6 @@ export interface ITrip extends Document {
   route: Route;
   billingType: 'Fixed' | 'Per Tonne' | 'Per Kg' | 'Per Trip' | 'Per Day' | 'Per Hour' | 'Per Litre' | 'Per Bag';
   amount: number;
-  balance : number;
   startDate: Date;
   truckHireCost?: number;
   LR: string;

@@ -50,18 +50,22 @@ export async function PUT(req: Request, {params}: {params : {driverId: string}})
   }
 }
 
-export async function DELETE(req : Request, {params} : {params : {driverId : string}}) {
-  const {driverId} = params
-  try{
-    await connectToDatabase()
-    const driver = await Driver.findOneAndDelete({driver_id : driverId})
-
-    if (!driver){
-      return NextResponse.json({message: 'driver not found'}, {status : 404})
+export async function DELETE(req: Request, { params }: { params: { driverId: string } }) {
+  const { driverId } = params;
+  try {
+    await connectToDatabase();
+    const foundDriver = await Driver.findOne({ driver_id: driverId });
+    if (foundDriver.status == 'On Trip') {
+      return NextResponse.json({ message: 'Driver On Trip Cannot Delete' }, { status: 400 });
     }
-    return NextResponse.json({message: 'Driver Deleted'}, {status : 200})
-  }catch(err : any){
-    return NextResponse.json({message : err.message}, {status : 500})
+    const driver = await Driver.findOneAndDelete({ driver_id: driverId });
+
+    if (!driver) {
+      return NextResponse.json({ message: 'Driver not found' }, { status: 404 });
+    }
+    return NextResponse.json({ message: 'Driver Deleted' }, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json({ message: err.message }, { status: 500 });
   }
 }
 

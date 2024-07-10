@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { ITrip } from '@/utils/interface';
 import { statuses } from '@/utils/schema';
+import { fetchBalance } from '@/helpers/fetchTripBalance';
 
 const SinglePartyTrips = () => {
   const router = useRouter();
@@ -86,7 +87,7 @@ const SinglePartyTrips = () => {
               <td>{trip.truck}</td>
               <td>{trip.route.origin} -&gt; {trip.route.destination}</td>
               <td>{statuses[trip.status as number]}</td>
-              <td>{trip.balance}</td>
+              <td>{fetchBalance(trip)}</td>
             </tr>
           ))}
         </tbody>

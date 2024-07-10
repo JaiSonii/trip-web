@@ -9,6 +9,7 @@ import Profit from './Profit';
 import PODViewer from './PODViewer';
 import DataList from './DataList';
 import Charges from './Charges'; // Import the Charges component
+import { fetchBalance } from '@/helpers/fetchTripBalance';
 
 interface TripDetailsProps {
   trip: ITrip;
@@ -18,8 +19,19 @@ interface TripDetailsProps {
 const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
   const [partyName, setPartyName] = useState('');
   const [accounts, setAccounts] = useState<PaymentBook[]>(trip.accounts);
-  const [tripBalance, setBalance] = useState(trip.balance);
+  const [tripBalance, setBalance] = useState(0);
   const [charges, setCharges] = useState<TripExpense[]>([])
+
+  useEffect(()=>{
+    const balance = async ()=>{
+      if (trip){
+        const pending = await fetchBalance(trip)
+        setBalance(pending)
+      }
+    }
+    balance()
+    
+  },[trip, charges, accounts])
 
   useEffect(() => {
     const fetchPartyName = async () => {
@@ -126,7 +138,6 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         const resData = await res.json();
         console.log(resData);
         setAccounts(resData.trip.accounts);
-        setBalance(resData.trip.balance);
         console.log('Payment settled');
       } catch (error: any) {
         alert(error.message);
@@ -183,7 +194,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         </div>
         <div className="col-span-3 mt-6 flex justify-start space-x-4">
           <div className="flex items-center space-x-4">
-            <StatusButton status={trip.status as number} statusUpdate={handleStatusUpdate} dates={trip.dates} amount={trip.balance} />
+            <StatusButton status={trip.status as number} statusUpdate={handleStatusUpdate} dates={trip.dates} amount={tripBalance} />
             <ViewBillButton />
             {/* Add more buttons as needed */}
           </div>

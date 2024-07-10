@@ -58,7 +58,7 @@ export const partySchema = new Schema({
       required: true
     },
     receivedByDriver: {
-      type: String,
+      type: Boolean,
       required: true
     },
     paymentDate : {
@@ -101,10 +101,6 @@ export const tripSchema = new Schema({
     amount : {
       type : Number,
       required: true
-    },
-    balance : {
-      type: Number,
-      required : true
     },
     startDate : {
       type : Date,
