@@ -3,30 +3,23 @@ import Modal from './Modal';
 import { ITrip, PaymentBook } from '@/utils/interface';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { handleDeleteItem } from '@/helpers/DeleteAccount';
+import { fetchBalance } from '@/helpers/fetchTripBalance';
 
 interface DataListProps {
   data: PaymentBook[];
   label: string;
   trip: ITrip;
   setData: React.Dispatch<React.SetStateAction<PaymentBook[]>>;
-  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  setTrip : any
+  setBalance : any
   modalTitle: string;
 }
 
-const DataList: React.FC<DataListProps> = ({
-  data,
-  label,
-  modalTitle,
-  trip,
-  setData,
-  setBalance,
-}) => {
+const DataList: React.FC<DataListProps> = ({data,label,modalTitle,trip,setData,setBalance, setTrip}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState<PaymentBook | null>(null);
   const [listData, setListData] = useState<PaymentBook[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const temp = data.filter((account) => account.accountType === label);
@@ -50,8 +43,11 @@ const DataList: React.FC<DataListProps> = ({
       }
       const resData = await res.json();
       setData(resData.trip.accounts);
+      const pending = await fetchBalance(resData.trip)
+      setBalance(pending)
       setIsModalOpen(false);
-      router.refresh();
+      setTrip(resData.trip)
+      // router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -71,24 +67,39 @@ const DataList: React.FC<DataListProps> = ({
       }
       const resData = await res.json();
       setData(resData.trip.accounts);
-
+      setTrip(resData.trip)
       setEditData(null);
       setIsModalOpen(false);
-      router.refresh();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleDelete = async (item: PaymentBook) => {
+  const handleDeleteItem = async (item: PaymentBook) => {
     try {
-      const updatedAccounts = await handleDeleteItem(trip.tripId, item);
-      setData(updatedAccounts);
-      router.refresh()
+      const res = await fetch(`/api/trips/${trip.tripId}/accounts/${item._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: { account: item, delete: true } }),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to delete item');
+      }
+      const resData = await res.json();
+      setData((prev: PaymentBook[]) => {
+        const updatedData = prev.filter((acc) => acc._id !== item._id);
+        console.log('Updated data:', updatedData);
+        return updatedData;
+      });
+      setTrip(resData.trip)
+      // router.refresh();
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   const toggleItemExpansion = (index: number) => {
     setExpandedItem((prev) => (prev === index ? null : index));
@@ -157,7 +168,7 @@ const DataList: React.FC<DataListProps> = ({
                     </button>
                     <button
                       className="text-xs text-red-500 hover:text-red-700 focus:outline-none"
-                      onClick={() => handleDelete(item)}
+                      onClick={() => handleDeleteItem(item)}
                     >
                       <MdDelete size={20} />
                     </button>

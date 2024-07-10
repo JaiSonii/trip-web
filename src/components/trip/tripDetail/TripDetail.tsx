@@ -143,25 +143,6 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         alert(error.message);
         console.log(error);
       }
-
-      if (data.receivedByDriver === true) {
-        const driverRes = await fetch(`/api/drivers/${trip.driver}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            got: data.amount,
-            gave: 0,
-            reason: `Trip Payment`,
-            date: data.dates[4],
-          }),
-        });
-        if (!driverRes.ok) {
-          throw new Error('Failed to update driver');
-        }
-        console.log('success');
-      }
     }
 
     console.log('Settle amount button clicked');
@@ -208,8 +189,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         </div>
 
         {/* Reusable Components */}
-        <DataList data={accounts} label="Advances" modalTitle="Add Advance" trip={trip} setData={setAccounts} setBalance={setBalance} />
-        <DataList data={accounts} label="Payments" modalTitle="Add Payment" trip={trip} setData={setAccounts} setBalance={setBalance} />
+        <DataList data={accounts} label="Advances" modalTitle="Add Advance" trip={trip} setData={setAccounts} setBalance = {setBalance} setTrip={setTrip}/>
+        <DataList data={accounts} label="Payments" modalTitle="Add Payment" trip={trip} setData={setAccounts} setBalance = {setBalance} setTrip={setTrip}/>
 
         {/* Charges Component Integration */}
         <Charges charges={charges} onAddCharge={handleAddCharge} setCharges={setCharges} tripId={trip.tripId}/>
