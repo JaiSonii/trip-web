@@ -81,7 +81,7 @@ const Driver: React.FC = () => {
           .filter((acc: PaymentBook) => acc.receivedByDriver === true)
           .map((acc: PaymentBook) => ({
             ...acc,
-            tripId: trip.tripId,
+            tripId: trip.trip_id,
           }))
       );
   
