@@ -5,7 +5,7 @@ function LoginPage() {
   return (
     <div className="flex flex-col items-center">
       <h1 className="font-bold text-center mb-5">
-        How to Add One-Time Password Phone Authentication
+        Login to Mo-Verse Trip Management
       </h1>
 
       <OtpLogin />
