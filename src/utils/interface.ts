@@ -49,7 +49,7 @@ export interface TripExpense extends Document{
 }
 
 export interface ITrip extends Document {
-  tripId: string;
+  trip_id: string;
   party: string;
   truck: string;
   driver: string;
@@ -72,6 +72,7 @@ export interface ITrip extends Document {
 
 
 export interface IParty extends Document {
+  user_id : string
   party_id: string;
   name: string;
   contactPerson: string;

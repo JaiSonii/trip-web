@@ -52,9 +52,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
       }
     };
     const fetchCharges  = async () =>{
-      const response = await fetch(`/api/trips/${trip.tripId}/expenses`);
+      const response = await fetch(`/api/trips/${trip.trip_id}/expenses`);
       const data = await response.json();
-      console.log(data)
       setCharges(data.charges);
     }
     if (charges){
@@ -68,7 +67,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
   const handleStatusUpdate = async (data: any) => {
     console.log(data);
     try {
-      const res = await fetch(`/api/trips/${trip.tripId}`, {
+      const res = await fetch(`/api/trips/${trip.trip_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +113,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
 
     if (data.status === 4) {
       try {
-        const res = await fetch(`/api/trips/${trip.tripId}`, {
+        const res = await fetch(`/api/trips/${trip.trip_id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -185,7 +184,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
           <TripInfo label="Freight Amount" value={`₹ ${trip.amount.toLocaleString()}`} />
           <TripInfo label="Start Date" value={new Date(trip.startDate).toLocaleDateString()} />
           <TripInfo label="End Date" value={trip.dates[1] ? new Date(trip.dates[1]).toLocaleDateString() : '----'} />
-          <TripInfo label="Notes" value={trip.notes || 'No notes available'} tripId={trip.tripId} />
+          <TripInfo label="Notes" value={trip.notes || 'No notes available'} tripId={trip.trip_id} />
         </div>
 
         {/* Reusable Components */}
@@ -193,7 +192,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ trip, setTrip }) => {
         <DataList data={accounts} label="Payments" modalTitle="Add Payment" trip={trip} setData={setAccounts} setBalance = {setBalance} setTrip={setTrip}/>
 
         {/* Charges Component Integration */}
-        <Charges charges={charges} onAddCharge={handleAddCharge} setCharges={setCharges} tripId={trip.tripId}/>
+        <Charges charges={charges} onAddCharge={handleAddCharge} setCharges={setCharges} tripId={trip.trip_id}/>
       </div>
 
       {/* Right Side - Profit, Balance, and POD Viewer */}

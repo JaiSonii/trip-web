@@ -31,7 +31,7 @@ const DataList: React.FC<DataListProps> = ({data,label,modalTitle,trip,setData,s
 
   const handleAddItem = async (newItem: any) => {
     try {
-      const res = await fetch(`/api/trips/${trip.tripId}`, {
+      const res = await fetch(`/api/trips/${trip.trip_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const DataList: React.FC<DataListProps> = ({data,label,modalTitle,trip,setData,s
 
   const handleEditItem = async (editedItem: any) => {
     try {
-      const res = await fetch(`/api/trips/${trip.tripId}/accounts/${editedItem.id}`, {
+      const res = await fetch(`/api/trips/${trip.trip_id}/accounts/${editedItem.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const DataList: React.FC<DataListProps> = ({data,label,modalTitle,trip,setData,s
 
   const handleDeleteItem = async (item: PaymentBook) => {
     try {
-      const res = await fetch(`/api/trips/${trip.tripId}/accounts/${item._id}`, {
+      const res = await fetch(`/api/trips/${trip.trip_id}/accounts/${item._id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

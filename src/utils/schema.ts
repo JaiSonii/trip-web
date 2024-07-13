@@ -2,6 +2,10 @@ import mongoose, { ConnectOptions } from "mongoose";
 import { Schema } from "mongoose";
 
 export const partySchema = new Schema({
+  user_id : {
+    type : String,
+    required : true
+  },
     party_id :{
       type: String,
       required: true
@@ -72,7 +76,11 @@ export const partySchema = new Schema({
 
 
 export const tripSchema = new Schema({
-    tripId: {
+  user_id : {
+    type : String,
+    required : true
+  },
+    trip_id: {
       type: String,
       required: true,
       unique: true
@@ -145,7 +153,10 @@ const driverAccountSchema = {
   got : Number,
 }
 export const driverSchema = new mongoose.Schema({
-
+  user_id : {
+    type : String,
+    required : true
+  },
     driver_id:{
       type: String,
       required: true,
@@ -176,6 +187,10 @@ export const driverSchema = new mongoose.Schema({
 
 
 export const truckSchema: Schema = new Schema({
+  user_id : {
+    type : String,
+    required : true
+  },
     truckNo: { type: String, required: true, unique: true },
     truckType: { type: String },
     model: { type: String},
@@ -190,6 +205,10 @@ export const truckSchema: Schema = new Schema({
 });
 
 export const supplierSchema : Schema = new Schema({
+  user_id : {
+    type : String,
+    required : true
+  },
   supplier_id :{
     type: String,
     required: true
@@ -217,6 +236,10 @@ export const userSchema = new Schema({
 });
 
 export const tripExpenseSchema = new Schema({
+  user_id : {
+    type : String,
+    required : true
+  },
   trip_id : {
     type : String,
     required : true
