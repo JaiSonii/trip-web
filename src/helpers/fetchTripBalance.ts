@@ -1,7 +1,7 @@
 import { ITrip, TripExpense } from "@/utils/interface";
 
 export const fetchBalance = async(trip : ITrip)=>{
-    const charges: TripExpense[] = await fetchCharges(trip.tripId)
+    const charges: TripExpense[] = await fetchCharges(trip.trip_id)
     const accountBalance = trip.accounts.reduce((total, account) => total + account.amount, 0);
       let chargeToBill = 0
       let chargeNotToBill = 0
