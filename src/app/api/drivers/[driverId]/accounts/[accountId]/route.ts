@@ -5,12 +5,17 @@ const Driver = models.Driver || model('Driver', driverSchema)
 
 import { NextResponse } from 'next/server';
 import { IDriver } from '@/utils/interface';
+import { verifyToken } from "@/utils/auth";
 
 
 
 
 
 export async function DELETE(req: Request,{ params }: { params: { driverId: string; accountId: string } }) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
     // const { driverId, accountId } = params;
     const url = req.url
     const url_arr = url?.split('/')
@@ -22,7 +27,7 @@ export async function DELETE(req: Request,{ params }: { params: { driverId: stri
       await connectToDatabase();
   
       // Find the driver document by driverId
-      const driver = await Driver.findOne({ driver_id: driverId });
+      const driver = await Driver.findOne({ user_id: user, driver_id: driverId });
   
       if (!driver) {
         return NextResponse.json({ message: 'Driver not found' }, { status: 404 });

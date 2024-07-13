@@ -17,10 +17,9 @@ export default function Error({
         <Image src={notfound} alt="Not Found" width={480} height={360} className="mx-auto rounded" />
         <h1 className="text-5xl font-bold text-gray-800 mt-6">404</h1>
         <p className="text-lg text-gray-600 mt-2">Oops! The page you are looking for doe not exist.</p>
-        <Link href="/" passHref>
-          <a className="mt-4 inline-block px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 hover:text-white transition duration-200 shadow-lg">
+        <Link href="/" className="mt-4 inline-block px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 hover:text-white transition duration-200 shadow-lg">
+        
             Go Home
-          </a>
         </Link>
       </div>
     </div>

@@ -2,14 +2,19 @@ import { NextResponse } from 'next/server';
 import mongoose, { model, models } from 'mongoose';
 import { connectToDatabase, truckSchema } from '@/utils/schema';
 import { TruckModel } from '@/utils/interface';
+import { verifyToken } from '@/utils/auth';
 
 const Truck = models.Truck || model('Truck', truckSchema);
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     await connectToDatabase()
 
-    const trucks = await Truck.find().exec();
+    const trucks = await Truck.find({ user_id: user }).exec();
     return NextResponse.json({ trucks });
   } catch (err) {
     console.error(err);
@@ -18,6 +23,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     await connectToDatabase(); // Ensure database connection is established
 
@@ -37,6 +46,7 @@ export async function POST(req: Request) {
 
     // Create a new TruckModel instance with provided data
     const newTruck = new Truck({
+      user_id: user,
       truckNo: data.truckNo,
       truckType: data.truckType || '',
       model: data.model || '',
@@ -45,7 +55,7 @@ export async function POST(req: Request) {
       ownership: data.ownership,
       supplier: data.supplier || '',
       status: 'Available',
-      trip_id : '',
+      trip_id: '',
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -55,10 +65,10 @@ export async function POST(req: Request) {
 
     // Return successful response with created truck data
     return NextResponse.json({ truck }, { status: 200 });
-  } catch (error : any) {
+  } catch (error: any) {
     // Handle errors during request processing
     console.error('Error creating truck:', error);
-    
+
     // Return error response with appropriate status code and message
     return NextResponse.json({ error: error.message || 'Failed to create truck' }, { status: 500 });
   }

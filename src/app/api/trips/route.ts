@@ -5,16 +5,21 @@ import { connectToDatabase } from '@/utils/schema';
 import { ITrip } from '@/utils/interface';
 import {v4 as uuidv4} from 'uuid'
 import { partySchema } from '@/utils/schema';
+import { verifyToken } from '@/utils/auth';
 
 const Trip = models.Trip || model('Trip', tripSchema);
 const Party = models.Party || model('Party', partySchema)
 
 
-export async function GET() {
+export async function GET(req : Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     await connectToDatabase();
 
-    const trips = await Trip.find().sort({ 'dates.0': -1 }).exec();
+    const trips = await Trip.find({user_id : user}).sort({ 'dates.0': -1 }).exec();
     return NextResponse.json({ trips });
   } catch (err) {
     console.error(err);
@@ -25,6 +30,10 @@ export async function GET() {
 
 
 export async function POST(this: any, req: Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     await connectToDatabase(); // Establish database connection
 
@@ -35,7 +44,8 @@ export async function POST(this: any, req: Request) {
 
     // Create a new Trip instance based on ITrip interface
     const newTrip: ITrip = new Trip({
-      tripId: 'trip' + uuidv4(),
+      user_id : user,
+      trip_id: 'trip' + uuidv4(),
       party: data.party,
       truck: data.truck,
       driver: data.driver,

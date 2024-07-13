@@ -2,17 +2,22 @@ import { NextResponse } from 'next/server';
 import mongoose, { model, models } from 'mongoose';
 import { connectToDatabase, driverSchema } from '@/utils/schema';
 import { IDriver } from '@/utils/interface';
+import { verifyToken } from '@/utils/auth';
 
 
 const Driver = models.Driver || model('Driver', driverSchema);
 
 
 
-export async function GET() {
+export async function GET(req : Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     await connectToDatabase()
 
-    const drivers = await Driver.find().exec();
+    const drivers = await Driver.find({user_id : user}).exec();
     return NextResponse.json({ drivers });
   } catch (err) {
     console.error(err);
@@ -21,6 +26,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
+
   try {
     await connectToDatabase()
 
@@ -36,6 +47,7 @@ export async function POST(req: Request) {
 
 
     const newDriver: IDriver = new Driver({
+      user_id : user,
       driver_id : data.driver_id,
       name: data.name,
       contactNumber : data.contactNumber,

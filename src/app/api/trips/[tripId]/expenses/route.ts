@@ -1,3 +1,4 @@
+import { verifyToken } from "@/utils/auth";
 import { connectToDatabase, tripExpenseSchema } from "@/utils/schema";
 import { model, models } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,6 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 const TripExpense = models.TripExpense || model('TripExpense', tripExpenseSchema);
 
 export async function GET(req: Request, { params }: { params: { tripId: string } }) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
     // Connect to the database
     await connectToDatabase();
 
@@ -14,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { tripId: string }
 
     try {
         // Fetch the trip expenses from the database
-        const charges = await TripExpense.find({ trip_id: tripId });
+        const charges = await TripExpense.find({user_id : user,  trip_id: tripId });
 
         // Return a success response with the charges
         return NextResponse.json({ status: 200, charges});

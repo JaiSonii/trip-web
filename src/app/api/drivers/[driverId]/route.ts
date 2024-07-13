@@ -5,17 +5,21 @@ import {v4 as uuidv4} from 'uuid'
 const Driver = models.Driver || model('Driver', driverSchema)
 
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import { IDriver } from '@/utils/interface';
+import { verifyToken } from "@/utils/auth";
 
 
 export async function GET(req: Request, { params }: { params: { driverId: string } }) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   const { driverId } = params;
 
   try {
     await connectToDatabase();
 
-    const driver = await Driver.findOne({driver_id : driverId}).exec();
+    const driver = await Driver.findOne({user_id : user, driver_id : driverId}).exec();
 
     if (!driver) {
       return NextResponse.json({ message: 'Driver not found' }, { status: 404 });
@@ -29,11 +33,15 @@ export async function GET(req: Request, { params }: { params: { driverId: string
 }
 
 export async function PUT(req: Request, {params}: {params : {driverId: string}}){
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   const {driverId} = params
   const data = await req.json()
   try{
     await connectToDatabase();
-    const driver: IDriver = await Driver.findOne({driver_id : driverId}).exec();
+    const driver: IDriver = await Driver.findOne({user_id : user , driver_id : driverId}).exec();
     driver.balance = driver.balance + data.got - data.gave
     driver.accounts.push({
       account_id : 'account' + uuidv4(),
@@ -51,10 +59,14 @@ export async function PUT(req: Request, {params}: {params : {driverId: string}})
 }
 
 export async function DELETE(req: Request, { params }: { params: { driverId: string } }) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   const { driverId } = params;
   try {
     await connectToDatabase();
-    const foundDriver = await Driver.findOne({ driver_id: driverId });
+    const foundDriver = await Driver.findOne({ user_id: user, driver_id: driverId });
     if (foundDriver.status == 'On Trip') {
       return NextResponse.json({ message: 'Driver On Trip Cannot Delete' }, { status: 400 });
     }
@@ -70,6 +82,10 @@ export async function DELETE(req: Request, { params }: { params: { driverId: str
 }
 
 export async function PATCH(req: Request, { params }: { params: { driverId: string } }) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
   try {
     const { driverId } = params;
     const { name, contactNumber, status } = await req.json();
@@ -77,7 +93,7 @@ export async function PATCH(req: Request, { params }: { params: { driverId: stri
 
     await connectToDatabase(); // Ensure this function is properly defined and imported
 
-    const driver = await Driver.findOne({ driver_id: driverId });
+    const driver = await Driver.findOne({ user_id : user, driver_id: driverId });
 
     if (!driver) {
       return NextResponse.json({ message: 'No Driver Found' }, { status: 404 });

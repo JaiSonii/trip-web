@@ -3,13 +3,22 @@ import  { model, models } from 'mongoose';
 import { connectToDatabase, partySchema } from '@/utils/schema';
 import { IParty } from '@/utils/interface';
 
+import { auth } from '@/firebase/firebaseAdmin';
+import { fetchCookie, verifyToken } from '@/utils/auth';
+
 const Party = models.Party || model('Party', partySchema);
 
-export async function GET() {
+export async function GET(req : Request) {
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
+  
+
   try {
     await connectToDatabase()
 
-    const parties = await Party.find().exec();
+    const parties = await Party.find({user_id : user}).exec();
     return NextResponse.json({ parties });
   } catch (err) {
     console.error(err);
@@ -19,6 +28,13 @@ export async function GET() {
 
 
 export async function POST(req: Request) {
+
+  const { user, error } = await verifyToken(req);
+  if (error) {
+    return NextResponse.json({ error });
+  }
+  
+
   try {
     await connectToDatabase()
 
@@ -43,6 +59,7 @@ export async function POST(req: Request) {
 
 
     const newParty: IParty = new Party({
+      user_id : user,
       party_id: data.party_id,
       name: data.name,
       contactPerson: data.contactPerson,
