@@ -4,11 +4,10 @@ import TripForm from '@/components/trip/TripForm';
 import { IDriver, TruckModel, IParty, ITrip } from '@/utils/interface';
 import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading'; // Ensure the Loading component shows a GIF
-import { loadingIndicator } from '@/components/ui/loadingIndicator';
 
 const CreateTripPage: React.FC = () => {
   const router = useRouter();
-  
+
   const [parties, setParties] = useState<IParty[]>([]);
   const [trucks, setTrucks] = useState<TruckModel[]>([]);
   const [drivers, setDrivers] = useState<IDriver[]>([]);
@@ -122,12 +121,10 @@ const CreateTripPage: React.FC = () => {
       }
 
       const data = await tripRes.json();
-      console.log(data);
-      alert('Trip saved successfully');
       router.push('/user/trips');
     } catch (error) {
       console.error('Error saving trip:', error);
-      alert(`An error occurred while saving the trip. Please try again.: \n${error}`  );
+      alert(`An error occurred while saving the trip. Please try again.: \n${error}`);
     } finally {
       setSaving(false); // Hide loading overlay
     }
@@ -137,15 +134,19 @@ const CreateTripPage: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-full h-full relative">
-      {saving &&  (
+    <>
+      {saving && (
         <div className='absolute inset-0 bg-black bg-opacity-10 flex justify-center items-center z-50'>
-          {loadingIndicator} {/* Ensure Loading component shows the GIF */}
+          <Loading /> {/* Ensure Loading component shows the GIF */}
         </div>
       )}
-      <h1 className="text-2xl font-bold text-center mb-4">Add a New Trip</h1>
-      <TripForm parties={parties} trucks={trucks} drivers={drivers} onSubmit={handleTripSubmit} lr={latestLR}/>
-    </div>
+      <div className="w-full h-full relative">
+
+        <h1 className="text-2xl font-bold text-center mb-4">Add a New Trip</h1>
+        <TripForm parties={parties} trucks={trucks} drivers={drivers} onSubmit={handleTripSubmit} lr={latestLR} />
+      </div>
+    </>
+
   );
 };
 

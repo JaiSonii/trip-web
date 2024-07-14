@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { ISupplier } from '@/utils/interface';
 import SupplierSelect from '@/components/truck/SupplierSelect';
 import AdditionalDetails from '@/components/truck/AdditionalDetails';
-import { useAuth } from '@/components/AuthProvider';
+import Loading from '@/app/loading';
 
 // Define the types
 type FormData = {
@@ -24,9 +24,9 @@ type FormData = {
 // Main CreateTruck component
 const CreateTruck: React.FC = () => {
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
-  
-   
+    const [saving, setSaving] = useState(false)
+
+
 
     const [formdata, setFormdata] = useState<FormData>({
         truckNo: '',
@@ -44,6 +44,7 @@ const CreateTruck: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setSaving(true)
         const fetchSuppliers = async () => {
             try {
                 const res = await fetch('/api/suppliers', {
@@ -62,6 +63,7 @@ const CreateTruck: React.FC = () => {
             } catch (err) {
                 setError((err as Error).message);
             } finally {
+                setSaving(false);
                 setLoading(false);
             }
         };
@@ -129,7 +131,6 @@ const CreateTruck: React.FC = () => {
             });
             setShowDetails(false); // Optionally reset additional details state
 
-            alert('Truck added successfully');
             router.push('/user/trucks')
         } catch (error) {
             // Handle fetch errors
@@ -157,72 +158,81 @@ const CreateTruck: React.FC = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="bg-white text-black p-4 max-w-md mx-auto shadow-md rounded-md">
-            <form className="space-y-4" onSubmit={handleSubmit}>
-                <input
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    type='text'
-                    name='truckNo'
-                    value={formdata.truckNo}
-                    placeholder='Enter the Truck Number'
-                    onChange={handleInputChange}
-                    required
-                />
-                <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    name='truckType'
-                    value={formdata.truckType}
-                    onChange={handleInputChange}
-                >
-                    <option value='' disabled>Select Truck Type</option>
-                    {truckTypes.map((truckType, index) => (
-                        <option key={index} value={truckType}>{truckType}</option>
-                    ))}
-                </select>
-                <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    name='ownership'
-                    value={formdata.ownership}
-                    onChange={handleInputChange}
-                >
-                    <option value='' disabled>Select Ownership</option>
-                    <option value='Self'>Self</option>
-                    <option value='Market'>Market</option>
-                </select>
-                {formdata.ownership === 'Market' && (
-                    <SupplierSelect
-                        suppliers={suppliers}
-                        value={formdata.supplier}
-                        onChange={handleInputChange}
-                    />
-                )}
-                {
-                    formdata.truckType !== 'Other' && (
-                        <button
-                            className="w-full p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
-                            type="button"
-                            onClick={() => setShowDetails(true)}
-                        >
-                            Add More Details
-                        </button>
-                    )
-                }
+        <>
+            {saving && (
+                <div className='absolute inset-0 bg-black bg-opacity-10 flex justify-center items-center z-50'>
+                    <Loading />
+                </div>
 
-                {showDetails && formdata.truckType !== 'Other' && (
-                    <AdditionalDetails
-                        formdata={formdata}
-                        renderModelOptions={renderModelOptions}
-                        handleInputChange={handleInputChange}
+            )}
+            <div className="bg-white text-black p-4 max-w-md mx-auto shadow-md rounded-md">
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <input
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        type='text'
+                        name='truckNo'
+                        value={formdata.truckNo}
+                        placeholder='Enter the Truck Number'
+                        onChange={handleInputChange}
+                        required
                     />
-                )}
-                <button
-                    className="w-full p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
-                    type="submit"
-                >
-                    Submit
-                </button>
-            </form>
-        </div>
+                    <select
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        name='truckType'
+                        value={formdata.truckType}
+                        onChange={handleInputChange}
+                    >
+                        <option value='' disabled>Select Truck Type</option>
+                        {truckTypes.map((truckType, index) => (
+                            <option key={index} value={truckType}>{truckType}</option>
+                        ))}
+                    </select>
+                    <select
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        name='ownership'
+                        value={formdata.ownership}
+                        onChange={handleInputChange}
+                    >
+                        <option value='' disabled>Select Ownership</option>
+                        <option value='Self'>Self</option>
+                        <option value='Market'>Market</option>
+                    </select>
+                    {formdata.ownership === 'Market' && (
+                        <SupplierSelect
+                            suppliers={suppliers}
+                            value={formdata.supplier}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                    {
+                        formdata.truckType !== 'Other' && (
+                            <button
+                                className="w-full p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
+                                type="button"
+                                onClick={() => setShowDetails(true)}
+                            >
+                                Add More Details
+                            </button>
+                        )
+                    }
+
+                    {showDetails && formdata.truckType !== 'Other' && (
+                        <AdditionalDetails
+                            formdata={formdata}
+                            renderModelOptions={renderModelOptions}
+                            handleInputChange={handleInputChange}
+                        />
+                    )}
+                    <button
+                        className="w-full p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
+                        type="submit"
+                    >
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </>
+
     )
 }
 

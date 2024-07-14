@@ -6,15 +6,17 @@ import { IParty } from '@/utils/interface';
 import { useRouter } from 'next/navigation';
 import { isValidGSTNumber } from '@/utils/validate';
 import { isValidPhone } from '@/utils/validate';
-import { useAuth } from '@/components/AuthProvider';
+import Loading from '@/app/loading';
 
 
 
 const CreatePartyPage: React.FC = () => {
+    const [saving, setSaving] = useState(false)
     const router = useRouter()
 
-  
+
     const handlePartySubmit = async (party: IParty) => {
+        setSaving(true)
         if (party.gstNumber && !isValidGSTNumber(party.gstNumber)) {
             alert('Invalid GST number. Please enter a valid GST number.');
             return;
@@ -50,19 +52,28 @@ const CreatePartyPage: React.FC = () => {
             }
 
             const data = await res.json();
-            alert('Party saved successfully');
             router.push('/user/parties');
         } catch (error) {
             console.error('Error saving party:', error);
             alert('An error occurred while saving the party. Please try again.');
+        } finally {
+            setSaving(false)
         }
     };
 
     return (
-        <div className='w-full h-full'>
-            <h1 className='text-xl font-bold text-center'>Add a New Party</h1>
-            <PartyForm onSubmit={handlePartySubmit} />
-        </div>
+        <>
+            {saving && (
+                <div className='absolute inset-0 bg-black bg-opacity-10 flex justify-center items-center z-50'>
+                    <Loading />
+                </div>
+            )}
+            <div className='w-full h-full'>
+                <h1 className='text-xl font-bold text-center'>Add a New Party</h1>
+                <PartyForm onSubmit={handlePartySubmit} />
+            </div>
+        </>
+
     );
 };
 
