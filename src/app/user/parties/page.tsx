@@ -19,7 +19,6 @@ const PartiesPage = () => {
 
   useEffect(() => {
     const fetchParties = async () => {
-      const token = await user?.getIdToken();
 
       try {
         const res = await fetch('/api/parties', {
@@ -48,7 +47,7 @@ const PartiesPage = () => {
     };
 
     fetchParties();
-  }, [user]);
+  }, []);
 
   if (loading) {
     return <Loading />;

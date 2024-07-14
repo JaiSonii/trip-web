@@ -15,7 +15,7 @@ const CreatePartyPage: React.FC = () => {
 
   
     const handlePartySubmit = async (party: IParty) => {
-        if (!isValidGSTNumber(party.gstNumber)) {
+        if (party.gstNumber && !isValidGSTNumber(party.gstNumber)) {
             alert('Invalid GST number. Please enter a valid GST number.');
             return;
         }

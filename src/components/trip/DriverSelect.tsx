@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 import { IDriver } from '@/utils/interface';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Props = {
   drivers: IDriver[];
@@ -8,61 +15,58 @@ type Props = {
   handleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-export const DriverSelect: React.FC<Props> = ({ drivers, formData, handleChange }) => {
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+const DriverSelect: React.FC<Props> = ({ drivers, formData, handleChange }) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const renderDriverStatus = (driverId: string) => {
-    const driver = drivers.find(driver => driver.driver_id === driverId);
-    if (driver) {
-      return (
-        <span className={`ml-2 p-1 rounded ${driver.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {driver.status}
-        </span>
-      );
-    }
-    return null;
-  };
-
-  const handleOptionSelect = (driver: IDriver) => {
-    handleChange({
+  const handleOptionSelect = (value: string) => {
+    const event = {
       target: {
         name: 'driver',
-        value: driver.driver_id
-      }
-    } as React.ChangeEvent<HTMLSelectElement>);
-    setDropdownOpen(false);
+        value: value,
+      },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    handleChange(event);
   };
 
+  const filteredDrivers = drivers.filter(driver =>
+    driver.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="relative">
-      <label className="block">
+    <div>
+      <label className="block w-full">
         <span className="text-gray-700">Driver</span>
-        <div
-          className="w-full p-2 border border-gray-300 rounded-md bg-white cursor-pointer"
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-        >
-          {formData.driver ? drivers.find(driver => driver.driver_id === formData.driver)?.name : 'Select Driver'}
-        </div>
+        <Select name="driver" value={formData.driver} onValueChange={handleOptionSelect}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Driver" />
+          </SelectTrigger>
+          <SelectContent>
+            <div className="p-2">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            {filteredDrivers.length > 0 ? (
+              filteredDrivers.map((driver) => (
+                <SelectItem key={driver.driver_id} value={driver.driver_id}>
+                  <span>{driver.name}</span>
+                  <span
+                    className={`ml-2 p-1 rounded ${driver.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                  >
+                    {driver.status}
+                  </span>
+                </SelectItem>
+              ))
+            ) : (
+              <div className="p-2 text-gray-500">No drivers found</div>
+            )}
+          </SelectContent>
+        </Select>
       </label>
-      {dropdownOpen && (
-        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto">
-          {drivers.map((driver) => (
-            <li
-              key={driver.driver_id}
-              className={`p-2 cursor-pointer hover:bg-gray-100 flex justify-between items-center ${formData.driver === driver.driver_id ? 'bg-gray-200' : ''}`}
-              onClick={() => handleOptionSelect(driver)}
-            >
-              <span>{driver.name}</span>
-              {renderDriverStatus(driver.driver_id)}
-            </li>
-          ))}
-        </ul>
-      )}
-      {formData.driver && (
-        <div className="mt-2">
-          {renderDriverStatus(formData.driver)}
-        </div>
-      )}
     </div>
   );
 };

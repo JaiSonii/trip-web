@@ -22,7 +22,6 @@ const CreateSupplierPage: React.FC = () => {
         }
 
         try {
-            console.log('Submitted Party:', supplier);
 
             const res = await fetch('/api/suppliers', {
                 method: 'POST',

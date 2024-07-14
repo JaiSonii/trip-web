@@ -1,11 +1,10 @@
-'use client';
-
+'use client'
 import React, { useEffect, useState } from 'react';
 import TripForm from '@/components/trip/TripForm';
 import { IDriver, TruckModel, IParty, ITrip } from '@/utils/interface';
 import { useRouter } from 'next/navigation';
-import Loading from '@/app/loading';
-import { useAuth } from '@/components/AuthProvider';
+import Loading from '@/app/loading'; // Ensure the Loading component shows a GIF
+import { loadingIndicator } from '@/components/ui/loadingIndicator';
 
 const CreateTripPage: React.FC = () => {
   const router = useRouter();
@@ -14,6 +13,7 @@ const CreateTripPage: React.FC = () => {
   const [trucks, setTrucks] = useState<TruckModel[]>([]);
   const [drivers, setDrivers] = useState<IDriver[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false); // New state for saving overlay
   const [error, setError] = useState<string | null>(null);
   const [latestLR, setLatestLR] = useState<string>(''); // State to hold the latest LR
 
@@ -64,8 +64,8 @@ const CreateTripPage: React.FC = () => {
     fetchData();
   }, []);
 
-
   const handleTripSubmit = async (trip: any) => {
+    setSaving(true); // Show loading overlay
 
     try {
       // Create the trip
@@ -95,7 +95,6 @@ const CreateTripPage: React.FC = () => {
           throw new Error('Failed to update supplier');
         }
       }
-
 
       // Update driver status
       const driverRes = await fetch(`/api/drivers/${trip.driver}`, {
@@ -128,16 +127,22 @@ const CreateTripPage: React.FC = () => {
       router.push('/user/trips');
     } catch (error) {
       console.error('Error saving trip:', error);
-      alert('An error occurred while saving the trip. Please try again.');
+      alert(`An error occurred while saving the trip. Please try again.: \n${error}`  );
+    } finally {
+      setSaving(false); // Hide loading overlay
     }
   };
-
 
   if (loading) return <Loading />;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {saving &&  (
+        <div className='absolute inset-0 bg-black bg-opacity-10 flex justify-center items-center z-50'>
+          {loadingIndicator} {/* Ensure Loading component shows the GIF */}
+        </div>
+      )}
       <h1 className="text-2xl font-bold text-center mb-4">Add a New Trip</h1>
       <TripForm parties={parties} trucks={trucks} drivers={drivers} onSubmit={handleTripSubmit} lr={latestLR}/>
     </div>

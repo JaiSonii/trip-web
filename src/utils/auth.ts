@@ -19,7 +19,7 @@ export async function verifyToken(req: Request) {
 
 export function fetchCookie(req : Request) {
   const cookie = req.headers.get('cookie')
-  const token = cookie?.split('=')[1]
+  const token = cookie?.split('auth_token=')[1]
   if (!token) {
     return {
       token: null,

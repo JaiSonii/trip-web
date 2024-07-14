@@ -119,7 +119,7 @@ const TripPage: React.FC = () => {
       if (!res.ok) {
         throw new Error('Failed to delete trip');
       }
-      router.push('/trips'); // Redirect to trips list after deletion
+      router.push('/user/trips'); // Redirect to trips list after deletion
     } catch (error) {
       console.error('Error deleting trip:', error);
     }

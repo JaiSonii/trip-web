@@ -16,24 +16,19 @@ export const partySchema = new Schema({
     },
     contactPerson: {
       type: String,
-      required: true
     },
     contactNumber: {
       type: String,
-      required: true
     },
     address: {
       type: String,
-      required: true
     },
     gstNumber: {
       type: String,
-      required: true,
       unique: true
     },
     balance: {
       type: Number,
-      required: true
     },
     createdAt: {
       type: Date,

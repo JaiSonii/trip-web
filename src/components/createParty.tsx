@@ -73,7 +73,6 @@ const PartyForm: React.FC<Props> = ({ onSubmit }) => {
           name="contactPerson"
           value={formData.contactPerson}
           onChange={handleChange}
-          required
           className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
         />
       </label>
@@ -84,7 +83,6 @@ const PartyForm: React.FC<Props> = ({ onSubmit }) => {
           name="contactNumber"
           value={formData.contactNumber}
           onChange={handleChange}
-          required
           className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
         />
       </label>
@@ -95,7 +93,6 @@ const PartyForm: React.FC<Props> = ({ onSubmit }) => {
           name="address"
           value={formData.address}
           onChange={handleChange}
-          required
           className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
         />
       </label>
@@ -106,7 +103,6 @@ const PartyForm: React.FC<Props> = ({ onSubmit }) => {
           name="gstNumber"
           value={formData.gstNumber}
           onChange={handleChange}
-          required
           className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
         />
       </label>
@@ -117,7 +113,6 @@ const PartyForm: React.FC<Props> = ({ onSubmit }) => {
           name="balance"
           value={formData.balance}
           onChange={handleChange}
-          required
           className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
         />
       </label>

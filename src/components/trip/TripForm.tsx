@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { PartySelect } from './PartySelect';
-import { TruckSelect } from './TruckSelect';
-import { DriverSelect } from './DriverSelect';
+import TruckSelect  from './TruckSelect';
+import DriverSelect from './DriverSelect';
 import RouteInputs from './RouteInputs';
 import { BillingInfo } from './BillingInfo';
-import { DateInputs } from './DateInputs';
+import {DateInputs} from './DateInputs';
 import { IDriver, IParty, TruckModel } from '@/utils/interface';
-import { tripSchema } from '@/utils/schema';
-
 type Props = {
     parties: IParty[];
     trucks: TruckModel[];
@@ -184,7 +182,7 @@ const TripForm: React.FC<Props> = ({ parties, trucks, drivers, onSubmit, lr}) =>
                         />
                     </div>
                 )}
-
+    
                 <button
                     className="w-full p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
                     type="submit"

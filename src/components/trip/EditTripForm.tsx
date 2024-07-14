@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PartySelect } from './PartySelect';
-import { TruckSelect } from './TruckSelect';
-import { DriverSelect } from './DriverSelect';
+import TruckSelect from './TruckSelect';
+import DriverSelect from './DriverSelect';
 import RouteInputs from './RouteInputs';
 import { IDriver, IParty, ITrip, TruckModel } from '@/utils/interface';
 
@@ -129,7 +129,7 @@ const EditTripForm: React.FC<Props> = ({ parties, trucks, drivers, onSubmit, tri
                             name="truckHireCost"
                             value={formData.truckHireCost}
                             placeholder="Truck Hire Cost"
-                            disabled
+                            onChange={handleChange}
                         />
                     </div>
                 )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Autosuggest, { SuggestionsFetchRequestedParams } from 'react-autosuggest';
+import Autosuggest, { SuggestionsFetchRequestedParams, SuggestionSelectedEventData } from 'react-autosuggest';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
@@ -61,6 +61,10 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
         handleChange({ ...event, target: { ...event.target, name: 'route.destination', value: newValue } });
     };
 
+    const handleSuggestionSelected = (setSuggestions: React.Dispatch<React.SetStateAction<string[]>>) => () => {
+        setSuggestions([]);
+    };
+
     const renderSuggestion = (suggestion: string) => {
         const isHighlighted = suggestion === highlightedSuggestion;
         return (
@@ -89,6 +93,7 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
                     suggestions={suggestionsOrigin}
                     onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsOrigin)}
                     onSuggestionsClearRequested={() => setSuggestionsOrigin([])}
+                    onSuggestionSelected={handleSuggestionSelected(setSuggestionsOrigin)}
                     getSuggestionValue={(suggestion) => suggestion}
                     renderSuggestion={renderSuggestion}
                     inputProps={inputProps("Enter city", formData.route.origin, handleOriginChange)}
@@ -101,6 +106,7 @@ const RouteInputs: React.FC<RouteInputsProps> = ({ formData, handleChange }) => 
                     suggestions={suggestionsDestination}
                     onSuggestionsFetchRequested={(params: SuggestionsFetchRequestedParams) => fetchSuggestions(params.value, setSuggestionsDestination)}
                     onSuggestionsClearRequested={() => setSuggestionsDestination([])}
+                    onSuggestionSelected={handleSuggestionSelected(setSuggestionsDestination)}
                     getSuggestionValue={(suggestion) => suggestion}
                     renderSuggestion={renderSuggestion}
                     inputProps={inputProps("Enter city", formData.route.destination, handleDestinationChange)}

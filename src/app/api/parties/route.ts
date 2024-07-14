@@ -41,13 +41,11 @@ export async function POST(req: Request) {
     const data = await req.json();
 
     // Basic validation
-    if (!data.name || !data.contactPerson || !data.contactNumber || !data.address || !data.gstNumber || data.balance == null) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
-    }
+    
 
     // GST number validation
     const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-    if (!gstRegex.test(data.gstNumber)) {
+    if (data.gstNumber && !gstRegex.test(data.gstNumber)) {
       return NextResponse.json({ message: 'Invalid GST number' }, { status: 400 });
     }
 
